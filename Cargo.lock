@@ -1,0 +1,61 @@
+[[package]]
+name = "asteroids"
+version = "0.1.0"
+dependencies = [
+ "sfml 0.14.0",
+]
+
+[[package]]
+name = "bitflags"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "csfml-audio-sys"
+version = "0.4.0"
+dependencies = [
+ "csfml-system-sys 0.4.0",
+ "sfml-build 0.2.0",
+]
+
+[[package]]
+name = "csfml-graphics-sys"
+version = "0.4.0"
+dependencies = [
+ "csfml-system-sys 0.4.0",
+ "csfml-window-sys 0.4.0",
+ "sfml-build 0.2.0",
+]
+
+[[package]]
+name = "csfml-system-sys"
+version = "0.4.0"
+dependencies = [
+ "sfml-build 0.2.0",
+]
+
+[[package]]
+name = "csfml-window-sys"
+version = "0.4.0"
+dependencies = [
+ "csfml-system-sys 0.4.0",
+ "sfml-build 0.2.0",
+]
+
+[[package]]
+name = "sfml"
+version = "0.14.0"
+dependencies = [
+ "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "csfml-audio-sys 0.4.0",
+ "csfml-graphics-sys 0.4.0",
+ "csfml-system-sys 0.4.0",
+ "csfml-window-sys 0.4.0",
+]
+
+[[package]]
+name = "sfml-build"
+version = "0.2.0"
+
+[metadata]
+"checksum bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)" = "228047a76f468627ca71776ecdebd732a3423081fcf5125585bcd7c49886ce12"
