@@ -1,0 +1,8 @@
+* Teleport at screen boundary
+* Asteroid-ship collisions
+* Asteroid-asteroid collisions
+* Shooting asteroids
+* Asteroid destruction
+* Properly timescale position changes due to velocity
+* Check for end condition
+* Random asteroid shape generation
