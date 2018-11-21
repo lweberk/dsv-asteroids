@@ -1,7 +1,11 @@
 //!
 //!
 //!
+extern crate rand;
 extern crate sfml;
+extern crate asteroids;
+
+use rand::Rng;
 
 use sfml::window::Key;
 use sfml::window::Event;
@@ -10,105 +14,25 @@ use sfml::window::Style;
 use sfml::graphics::Font;
 use sfml::graphics::Text;
 use sfml::graphics::Color;
-use sfml::graphics::Drawable;
-use sfml::graphics::ConvexShape;
 use sfml::graphics::RenderTarget;
 use sfml::graphics::RenderWindow;
-use sfml::graphics::RenderStates;
 use sfml::graphics::Transformable;
 
 use sfml::system::Vector2f;
 
-struct Ship<'s>
-{
-    shape: ConvexShape<'s>,
-
-    position: Vector2f,
-    rotation: f32,
-
-    linear_vel:  Vector2f,
-    angular_vel: f32,
-}
-
-
-impl<'s> Ship<'s>
-{
-    fn new(x: f32, y: f32, rotation: f32) -> Self
-    {
-        let mut shape = ConvexShape::new(3);
-        shape.set_point(0, Vector2f::new(-15.0, -15.0));
-        shape.set_point(1, Vector2f::new( 15.0, -15.0));
-        shape.set_point(2, Vector2f::new(  0.0,  15.0));
-
-        Self {
-            shape: shape,
-
-            position:    Vector2f::new(x, y),
-            linear_vel:  Vector2f::new(0.0, 0.0),
-            rotation:    rotation,
-            angular_vel: 0.0,
-        }
-    }
-
-    fn update(&mut self)
-    {
-        self.position += self.linear_vel;
-        self.rotation += self.angular_vel;
-    }
-
-    fn accelerate(&mut self, accel: f32)
-    {
-        let dir = self.rotation.to_radians();
-
-        // how much 'x' and 'y' is affected by the acceleration given our current
-        // heading/rotation/azimuth
-        let delta = Vector2f::new(
-            accel * dir.cos(),
-            accel * dir.sin(),
-        );
-
-        self.linear_vel += delta;
-    }
-
-    fn rotate(&mut self, rotation: f32)
-    {
-        self.angular_vel += rotation;
-    }
-
-    fn rotation(&self) -> f32
-    {
-        self.rotation
-    }
-
-    fn velocity(&self) -> &Vector2f
-    {
-        &self.linear_vel
-    }
-}
-
-
-impl<'s> Drawable for Ship<'s>
-{
-    fn draw<'a: 'shader, 'texture, 'shader, 'shader_texture>(
-            &'a self,
-            target: &mut RenderTarget,
-            _: RenderStates<'texture, 'shader, 'shader_texture>
-        )
-    {
-        let mut shape = self.shape.clone();
-
-        shape.set_position(self.position);
-        shape.set_rotation(self.rotation - 90.0);
-
-        target.draw(&shape);
-    }
-}
+use asteroids::Ship;
+use asteroids::Asteroid;
 
 
 fn main()
 {
+    let mut rng = rand::thread_rng();
+
+    let win_width  = 800;
+    let win_height = 600;
+
     let mut window = RenderWindow::new(
-        (800, 600),
+        (win_width, win_height),
         "Asteroids",
         Style::CLOSE,
         &Default::default()
@@ -119,10 +43,45 @@ fn main()
     let font = Font::from_memory(include_bytes!("../assets/FreeSans.ttf"))
         .expect("Could not load font from file");
 
-    let mut ship = Ship::new(200.0, 200.0, 0.0);
+
+    let mut ship      = Ship::new(win_width as f32 / 2.0, win_height as f32 / 2.0, 0.0);
+    let mut asteroids = Vec::new();
+
+    for _ in 0..rng.gen_range(1, 5)
+    {
+        let pos_x    = rng.gen_range(0.0, win_width  as f32);
+        let pos_y    = rng.gen_range(0.0, win_height as f32);
+        let vel_x    = rng.gen_range(-1.00,  1.00);
+        let vel_y    = rng.gen_range(-1.00,  1.00);
+        let rotation = rng.gen_range(-0.15,  0.15);
+        let scale    = rng.gen_range(10.00, 30.00);
+
+        let mut asteroid = Asteroid::new(pos_x, pos_y, Vector2f::new(vel_x, vel_y), rotation, scale);
+
+        asteroids.push(asteroid);
+    }
 
     while window.is_open()
     {
+        let mut alive_asteroids = Vec::new();
+
+        for asteroid in asteroids.drain(..)
+        {
+            let pos = asteroid.position();
+
+            if pos.x < 0.0 || pos.x > win_width as f32 {
+                continue;
+            }
+
+            if pos.y < 0.0 || pos.y > win_height as f32 {
+                continue;
+            }
+
+            alive_asteroids.push(asteroid);
+        }
+
+        asteroids = alive_asteroids;
+
         while let Some(event) = window.poll_event()
         {
             match event
@@ -131,19 +90,19 @@ fn main()
                 Event::KeyPressed { code: Key::Escape, .. } => { window.close(); },
 
                 Event::KeyPressed { code: Key::Left, .. } => {
-                    ship.rotate(-1.0);
+                    ship.rotate(-0.5);
                 },
 
                 Event::KeyPressed { code: Key::Right, .. } => {
-                    ship.rotate(1.0);
+                    ship.rotate(0.5);
                 },
 
                 Event::KeyPressed { code: Key::Up, .. } => {
-                    ship.accelerate(1.0);
+                    ship.accelerate(0.5);
                 },
 
                 Event::KeyPressed { code: Key::Down, .. } => {
-                    ship.accelerate(-1.0);
+                    ship.accelerate(-0.5);
                 },
 
                 _ => ()
@@ -151,6 +110,10 @@ fn main()
         }
 
         ship.update();
+
+        for asteroid in asteroids.iter_mut() {
+            asteroid.update();
+        }
 
         let ship_rotation = ship.rotation();
         let ship_velocity = ship.velocity();
@@ -166,6 +129,10 @@ fn main()
         window.draw(&text_angle);
         window.draw(&text_velocity);
         window.draw(&ship);
+
+        for asteroid in asteroids.iter() {
+            window.draw(asteroid);
+        }
 
         window.display();
     }

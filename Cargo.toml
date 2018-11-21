@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["Leonhard Weber <leonhard.weber@voipir.cl>", "Clemente Alarcon <clementealarcon@dsvillarrica.cl>"]
 
 [dependencies]
+rand = {version = "*"}
 sfml = {version = "*", path = "lib/sfml"}
