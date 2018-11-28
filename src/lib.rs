@@ -1,7 +1,10 @@
 //!
 //! Asteroids
 //!
+extern crate rand;
 extern crate sfml;
+
+use rand::Rng as RandRng;
 
 use sfml::system::Vector2f        as SfmlVector2f;
 use sfml::graphics::Drawable      as SfmlDrawable;

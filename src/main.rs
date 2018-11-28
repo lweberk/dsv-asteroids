@@ -54,7 +54,7 @@ fn main()
         let vel_x    = rng.gen_range(-1.00,  1.00);
         let vel_y    = rng.gen_range(-1.00,  1.00);
         let rotation = rng.gen_range(-0.15,  0.15);
-        let scale    = rng.gen_range(10.00, 30.00);
+        let scale    = rng.gen_range(30.00, 100.00);
 
         let mut asteroid = Asteroid::new(pos_x, pos_y, Vector2f::new(vel_x, vel_y), rotation, scale);
 
