@@ -2,9 +2,13 @@
 //! Asteroid
 //!
 
+extern crate rand;
+extern crate sfml;
+
+use self::rand::Rng;
+
 use ::SfmlVector2f;
 use ::SfmlConvexShape;
-
 use ::SfmlRenderTarget;
 use ::SfmlRenderStates;
 
@@ -27,19 +31,29 @@ impl<'s> Asteroid<'s>
 {
     pub fn new(x: f32, y: f32, velocity: SfmlVector2f, rotation: f32, scale: f32) -> Self
     {
+        let mut rng = rand::thread_rng();
         let mut shape = SfmlConvexShape::new(10);
 
-        shape.set_point(0, SfmlVector2f::new(-4.0 * scale,  1.0 * scale));
-        shape.set_point(1, SfmlVector2f::new(-4.0 * scale, -2.0 * scale));
-        shape.set_point(2, SfmlVector2f::new(-2.0 * scale, -3.0 * scale));
-        shape.set_point(3, SfmlVector2f::new( 0.0 * scale, -5.0 * scale));
-        shape.set_point(4, SfmlVector2f::new( 2.0 * scale, -1.0 * scale));
-        shape.set_point(5, SfmlVector2f::new( 4.0 * scale,  2.0 * scale));
-        shape.set_point(6, SfmlVector2f::new( 2.0 * scale,  4.0 * scale));
-        shape.set_point(7, SfmlVector2f::new( 0.0 * scale,  5.0 * scale));
-        shape.set_point(8, SfmlVector2f::new(-3.0 * scale,  4.0 * scale));
-        shape.set_point(9, SfmlVector2f::new(-2.0 * scale,  2.0 * scale));
+        // shape.set_point(0, SfmlVector2f::new(-4.0 * scale,  1.0 * scale));
+        // shape.set_point(1, SfmlVector2f::new(-4.0 * scale, -2.0 * scale));
+        // shape.set_point(2, SfmlVector2f::new(-2.0 * scale, -3.0 * scale));
+        // shape.set_point(3, SfmlVector2f::new( 0.0 * scale, -5.0 * scale));
+        // shape.set_point(4, SfmlVector2f::new( 2.0 * scale, -1.0 * scale));
+        // shape.set_point(5, SfmlVector2f::new( 4.0 * scale,  2.0 * scale));
+        // shape.set_point(6, SfmlVector2f::new( 2.0 * scale,  4.0 * scale));
+        // shape.set_point(7, SfmlVector2f::new( 0.0 * scale,  5.0 * scale));
+        // shape.set_point(8, SfmlVector2f::new(-3.0 * scale,  4.0 * scale));
+        // shape.set_point(9, SfmlVector2f::new(-2.0 * scale,  2.0 * scale));
 
+        for i in 0..9
+            {
+            let m = rng.gen_range(-80.0, 80.0);
+            let n = rng.gen_range(-40.0, 40.0);
+
+            shape.set_point(i, SfmlVector2f::new(m, n));
+            }
+
+        // }
         Self {
             shape: shape,
 
